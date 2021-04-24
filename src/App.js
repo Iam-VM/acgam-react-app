@@ -1,6 +1,6 @@
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
-import CertGen from "./components/certGen/certGen";
-import LogIn from "./components/login/Login";
+import CertGen from "./components/certGen";
+import Login from "./components/login";
 import Error404 from "./components/error/Error404";
 import {AuthenticatedOnlyRoute, UnAuthenticatedRoute} from "./PrivateRoutes";
 import {useEffect} from "react";
@@ -25,9 +25,9 @@ function App () {
                 <AuthenticatedOnlyRoute exact path={"/"}>
                     <Route component={CertGen} />
                 </AuthenticatedOnlyRoute>
-                {/*<Route path={"/login"} component={LogIn} />*/}
+                {/*<Route path={"/login"} component={Login} />*/}
                 <UnAuthenticatedRoute path={"/login"}>
-                    <Route component={LogIn} />
+                    <Route component={Login} />
                 </UnAuthenticatedRoute>
                 <Route component={Error404} />
             </Switch>

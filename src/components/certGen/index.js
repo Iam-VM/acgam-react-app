@@ -1,3 +1,8 @@
-export default () => {
+import CertGen from "./certGen";
 
+
+export default () => {
+    return (
+        <CertGen />
+    );
 }
