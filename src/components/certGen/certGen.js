@@ -1,8 +1,11 @@
-import {useHistory} from "react-router-dom";
+import {Redirect, useHistory} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useFirebase, isLoaded, useFirestoreConnect, isEmpty,} from "react-redux-firebase";
 import {useEffect, useState} from "react";
+import axios from 'axios';
 
+import NavBar from "./navBar";
+import Body from "./body/index";
 
 const CertGen = () => {
     const auth = useSelector(state => state.firebase.auth);
@@ -20,13 +23,13 @@ const CertGen = () => {
     });
 
 
-
+    // TODO: Redirect to CertGen if null
     useEffect(() => {
         console.log("insiude useEffect")
-        if (firestoreState !== undefined) {
-            if (firestoreState.data !== undefined) {
-                if (firestoreState.data.users !== undefined) {
-                    if (firestoreState.data.users[auth.uid] !== undefined) {
+        if (firestoreState) {
+            if (firestoreState.data) {
+                if (firestoreState.data.users) {
+                    if (firestoreState.data.users[auth.uid]) {
                         const user = firestoreState.data.users[auth.uid];
                         setUserState({
                             name: user.name,
@@ -39,6 +42,13 @@ const CertGen = () => {
         }
     }, [])
 
+    axios.interceptors.request.use(async config => {
+        config.headers.idToken = await firebase.auth().currentUser.getIdToken()
+        return config
+    }, (error) => {
+        return Promise.reject(error)
+    })
+
 
     useFirestoreConnect({
         collection: 'users',
@@ -46,18 +56,7 @@ const CertGen = () => {
     })
 
 
-
-    // const user = useSelector(state => state.firestore.data.users)[auth.uid];
-
-
     const signOut = () => {
-        // firebase_firebase.auth().signOut()
-        //     .then(() => {
-        //         history.push('/login');
-        //     })
-        //     .catch((err) => {
-        //
-        //     });
         firebase.logout()
             .then(() => {
                 history.push('/login');
@@ -70,12 +69,8 @@ const CertGen = () => {
 
     return (
         <div>
-            <div>
-                <div>Hello, {userState.name}.</div>
-                <button onClick={signOut}>Sign Out</button>
-                {/*{isLoaded(auth)?<p>Auth is loaded</p>:<p>auth is not loaded</p>}*/}
-                {/*{!isEmpty(auth)?<p>User is authenticated</p>:<p>user is not authenticated</p>}*/}
-            </div>
+            <NavBar userState={userState} signOut={signOut} />
+            <Body />
         </div>
     );
 }
