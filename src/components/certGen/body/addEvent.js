@@ -1,22 +1,27 @@
-import {useRef} from "react";
-import {useFirestore} from "react-redux-firebase";
+import {useRef, useState} from "react";
+import DatePicker from "react-datepicker";
 
-const AddEvent = () => {
+import "react-datepicker/dist/react-datepicker.css";
+import {postJson} from "../../../lib/postJson";
+
+
+const AddEvent = ({setBodyState}) => {
     const eventNameRef = useRef("");
-
+    const [startDate, setStartDate] = useState(new Date());
     const handleAddEventSubmission = (e) => {
         e.preventDefault();
-
-        // TODO: Add event to postgres
-        
-
+        postJson('/private/event/add', {startDate, eventName: eventNameRef.current.value});
     }
 
 
     return (
         <div>
-            <input type="text" ref={eventNameRef} placeholder={"enter event name"} />
-            <button type={"submit"} onClick={handleAddEventSubmission}>Add</button>
+            <div>
+                <input type="text" ref={eventNameRef} placeholder={"enter event name"} />
+                <DatePicker selected={startDate} onChange={date => setStartDate(date)} />
+                <button type={"submit"} onClick={handleAddEventSubmission}>Add</button>
+            </div>
+            <button onClick={() => setBodyState('root')}>Back</button>
         </div>
     );
 };

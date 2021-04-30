@@ -14,7 +14,7 @@ firebase.initializeApp({
 });
 
 // export const user = app.user();
-// export const db = app.firestore();
+// export const sql = app.firestore();
 firebase.auth();
 firebase.firestore();
 

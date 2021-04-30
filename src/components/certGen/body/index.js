@@ -1,6 +1,6 @@
 import {useState} from "react";
 import AddEvent from "./addEvent";
-import Root from "./root";
+import Home from "./home";
 import SendCerts from "./sendCerts";
 
 const Body = () => {
@@ -8,10 +8,10 @@ const Body = () => {
 
     return (
         (bodyState === "eventAdd")?
-            <AddEvent />:
+            <AddEvent setBodyState={setBodyState} />:
             ((bodyState === "root")?
-                <Root setBodyState={setBodyState} />:
-                <SendCerts />)
+                <Home setBodyState={setBodyState} />:
+                <SendCerts setBodyState={setBodyState} />)
     );
 }
 
