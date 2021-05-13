@@ -11,6 +11,8 @@ const SendCerts = ({setBodyState}) => {
     const [eventList, setEventList] = useState(null);
     const [loading, setLoading] = useState(true);
     const [fileError, setFileError] = useState(0);
+    const [resError, setResError] = useState(null);
+
     /*
     * fileError - 0 - No error at all
     * fileError - 1 - File not added
@@ -37,13 +39,23 @@ const SendCerts = ({setBodyState}) => {
         }
         setFileError(0)
         const formData = new FormData();
-        formData.append('eventName', eventNameRef.current.value);
+        formData.append('eventID', eventNameRef.current.value);
         formData.append('templateType', templateRef.current.value);
         formData.append('recipientType', recipientTypeRef.current.value);
         formData.append('file', fileRef.current.files[0]);
         axios.post('/private/send', formData)
             .then((res) => {
-
+                switch (res.status) {
+                    case 415:
+                        setResError(res.data);
+                        break;
+                    case 500:
+                        setResError(res.data);
+                        break;
+                    default:
+                        setResError(null);
+                        break;
+                }
             })
             .catch(err => {
                 console.log("error occurred while sending form");
@@ -89,6 +101,7 @@ const SendCerts = ({setBodyState}) => {
                     <input type="file" name={"uploadedFile"} ref={fileRef} onChange={fileChangeHandler} />
                     <p>{fileError === 2 ? "Unsupported file format" : null}</p>
                 </label>
+                {resError?<p>CSV File Poorly formatted</p>:null}
                 <input type="submit" name={"Send"} disabled={([1, 2].includes(fileError))}/>
             </form>
             <button onClick={() => setBodyState('root')}>Back</button>
