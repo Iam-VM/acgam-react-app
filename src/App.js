@@ -1,5 +1,5 @@
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
-import CertGen from "./components/certGen";
+import CertGen from "./components/home";
 import Login from "./components/login";
 import Error404 from "./components/error/Error404";
 import {AuthenticatedOnlyRoute, UnAuthenticatedRoute} from "./PrivateRoutes";
