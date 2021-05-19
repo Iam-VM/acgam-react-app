@@ -1,11 +1,12 @@
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
-import CertGen from "./components/certGen";
+import CertGen from "./components/home";
 import Login from "./components/login";
 import Error404 from "./components/error/Error404";
 import {AuthenticatedOnlyRoute, UnAuthenticatedRoute} from "./PrivateRoutes";
 import {useEffect} from "react";
 import firebase_FIREBASE from "./firebase";
 import {useDispatch} from "react-redux";
+import SendCerts from "./components/home/body/sendCerts";
 
 
 function App () {
@@ -25,6 +26,12 @@ function App () {
                 <AuthenticatedOnlyRoute exact path={"/"}>
                     <Route component={CertGen} />
                 </AuthenticatedOnlyRoute>
+                {/*<AuthenticatedOnlyRoute exact path={"/send-certs"}>*/}
+                {/*    <Route component={SendCerts} />*/}
+                {/*</AuthenticatedOnlyRoute>*/}
+                {/*<AuthenticatedOnlyRoute exact path={"/"}>*/}
+                {/*    <Route component={CertGen} />*/}
+                {/*</AuthenticatedOnlyRoute>*/}
                 {/*<Route path={"/login"} component={Login} />*/}
                 <UnAuthenticatedRoute path={"/login"}>
                     <Route component={Login} />
