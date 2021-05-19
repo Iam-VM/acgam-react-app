@@ -5,11 +5,8 @@ import NetworkError from "../../error/networkError";
 import SendingCerts from "./sendingCerts";
 import ConfirmBox from "./confirmBox";
 
-const execution_mode = process.env.REACT_APP_MODE;
-
 
 const SendCerts = ({setBodyState}) => {
-    const domain = (execution_mode === 'development') ? 'http://localhost:4000/':'https://acgam.herokuapp.com';
 
     const eventNameRef = useRef(null);
     const templateRef = useRef(null);
@@ -66,7 +63,7 @@ const SendCerts = ({setBodyState}) => {
 
     const formSubmitHandler = (e) => {
         e.preventDefault();
-        const socket = SocketIOClient(domain);
+        const socket = SocketIOClient();
         setSendingCertsFlag(true);
         if (fileRef.current.files[0] === null) {
             setFileError(1);
