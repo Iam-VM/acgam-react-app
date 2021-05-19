@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 
-const SendingCerts = ({socket, setSendingCertsFlag}) => {
-    const [log, setLog] = useState("log log");
+const SendingCerts = ({socket, setSendingCertsFlag, log}) => {
+
 
     // useEffect(() => {
     //     socket.on('log', (data) => {

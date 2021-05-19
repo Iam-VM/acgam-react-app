@@ -16,11 +16,13 @@ const SendCerts = ({setBodyState}) => {
     const [eventList, setEventList] = useState([]);
     const [loading, setLoading] = useState(null);
     const [fileError, setFileError] = useState(0);
+    const [submitDisabled, setSubmitDisabled] = useState(true);
     const [resError, setResError] = useState(null);
-    const [resOkay, setResOkay] = useState(false);
+    const [resOkay, setResOkay] = useState(null);
     const [loadEventsStatus, setLoadEventsStatus] = useState(true);
     const [networkStatus, setNetworkStatus] = useState(true);
     const [sendingCertsFlag, setSendingCertsFlag] = useState(false);
+    const [log, setLog] = useState("sending certificate to John doe...");
 
 
     // const socket = SocketIOClient(domain);
@@ -57,43 +59,57 @@ const SendCerts = ({setBodyState}) => {
     }, []);
 
     const formSubmitHandler = (e) => {
-        // setSendingCertsFlag(true);
         e.preventDefault();
+        setSendingCertsFlag(true);
         if (fileRef.current.files[0] === null) {
             setFileError(1);
+            return;
         }
         setFileError(0)
         const formData = new FormData();
         formData.append('eventID', eventNameRef.current.value);
-        formData.append('templateType', templateRef.current.value);
+        formData.append('templateName', templateRef.current.value);
         formData.append('file', fileRef.current.files[0]);
+        setResError(null);
+        setResOkay(null);
         axios.post('/private/send', formData)
             .then((res) => {
                 console.log(res.data)
                 switch (res.status) {
-                    case 400:
-                        setResError(res.data);
+                    case 200:
+                        if (["CSV File Poorly Formatted", "Certificate Template Not Found"].includes(res.data)) {
+                            setResError(res.data);
+                            setSendingCertsFlag(false);
+                            break;
+                        }
+                        setResError(null);
+                        setResOkay(res.data);
+                        setSendingCertsFlag(false);
                         break;
                     case 500:
                         setResError(res.data);
-                        break;
-                    case 200:
-                        setResOkay(true);
+                        setResOkay(null);
+                        setSendingCertsFlag(false);
                         break;
                     default:
-                        setResError(null);
+                        setResOkay(null);
+                        setResError("Some Unknown Issues Occurred");
+                        setSendingCertsFlag(false);
                         break;
                 }
             })
             .catch(err => {
-                console.log("error occurred while sending form");
+                setSendingCertsFlag(false);
+                setResError("Couldn't connect to server...");
             });
     }
 
     const fileChangeHandler = () => {
+        setSubmitDisabled(false);
         setFileError(0);
         console.log(fileRef.current.files[0].type)
         if (!['text/csv', 'text/comma-separated-values', 'application/csv'].includes(fileRef.current.files[0].type)) {
+            setSubmitDisabled(true);
             setFileError(2);
             fileRef.current.value = "";
         }
@@ -101,9 +117,9 @@ const SendCerts = ({setBodyState}) => {
 
     return (
         (loading) ? <div>Loading...</div>:
-            (!networkStatus) ? <NetworkError setBodyState={setBodyState}/>:
+            (!networkStatus) ? <NetworkError setBodyState={setBodyState} />:
                 (!loadEventsStatus) ? <div>Sorry, there was a problem while fetching events!!</div>:
-                    (sendingCertsFlag) ? <SendingCerts socket={null} setSendingCertsFlag={setSendingCertsFlag} />:
+                    (sendingCertsFlag) ? <SendingCerts socket={null} setSendingCertsFlag={setSendingCertsFlag} log={log} />:
                 <div>
                     <form onSubmit={formSubmitHandler}>
                         <label>
@@ -115,7 +131,7 @@ const SendCerts = ({setBodyState}) => {
                         <label>
                             Choose a Template:
                             <select ref={templateRef} name={"templateName"}>
-                                <option value={"SB Template - Coordinator"}>SB Template - Coordinators</option>
+                                <option value={"SB Template - Coordinators"}>SB Template - Coordinators</option>
                                 <option value={"SB Template - Participants"}>SB Template - Participants</option>
                                 <option value={"SB Template - Volunteers"}>SB Template - Volunteers</option>
                                 <option value={"SB Template - Winners"}>SB Template - Winners</option>
@@ -131,8 +147,9 @@ const SendCerts = ({setBodyState}) => {
                             <input type="file" name={"uploadedFile"} ref={fileRef} onChange={fileChangeHandler} />
                             <p>{fileError === 2 ? "Unsupported file format" : null}</p>
                         </label>
-                        {resError?<p>CSV File Poorly formatted</p>:null}
-                        <input type="submit" name={"Send"} disabled={([1, 2].includes(fileError))}/>
+                        {<p>{resError}</p>}
+                        {<p>{resOkay}</p>}
+                        <input type="submit" name={"Send"} disabled={submitDisabled} />
                     </form>
                     <button onClick={() => setBodyState('root')}>Back</button>
                 </div>
