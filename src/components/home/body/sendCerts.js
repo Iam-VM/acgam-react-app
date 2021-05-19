@@ -3,12 +3,13 @@ import axios from "axios";
 import SocketIOClient from 'socket.io-client';
 import NetworkError from "../../error/networkError";
 import SendingCerts from "./sendingCerts";
+import ConfirmBox from "./confirmBox";
 
 const execution_mode = process.env.REACT_APP_MODE;
 
 
 const SendCerts = ({setBodyState}) => {
-    // const domain = (execution_mode === 'development') ? 'http://localhost:4000/':'https://acgam.herokuapp.com';
+    const domain = (execution_mode === 'development') ? 'http://localhost:4000/':'https://acgam.herokuapp.com';
 
     const eventNameRef = useRef(null);
     const templateRef = useRef(null);
@@ -22,10 +23,9 @@ const SendCerts = ({setBodyState}) => {
     const [loadEventsStatus, setLoadEventsStatus] = useState(true);
     const [networkStatus, setNetworkStatus] = useState(true);
     const [sendingCertsFlag, setSendingCertsFlag] = useState(false);
-    const [log, setLog] = useState("sending certificate to John doe...");
-
-
-    // const socket = SocketIOClient(domain);
+    const [confirmBoxFlag, setConfirmBoxFlag] = useState(false);
+    const [formEvent, setFormEvent] = useState(null);
+    const [log, setLog] = useState(null);
 
 
     /*
@@ -58,8 +58,15 @@ const SendCerts = ({setBodyState}) => {
             })
     }, []);
 
+    const submitClickHandler = (e) => {
+        e.preventDefault();
+        setFormEvent(e);
+        setConfirmBoxFlag(true);
+    };
+
     const formSubmitHandler = (e) => {
         e.preventDefault();
+        const socket = SocketIOClient(domain);
         setSendingCertsFlag(true);
         if (fileRef.current.files[0] === null) {
             setFileError(1);
@@ -72,6 +79,9 @@ const SendCerts = ({setBodyState}) => {
         formData.append('file', fileRef.current.files[0]);
         setResError(null);
         setResOkay(null);
+        socket.on("log", (msg) => {
+            setLog(msg);
+        });
         axios.post('/private/send', formData)
             .then((res) => {
                 console.log(res.data)
@@ -79,28 +89,43 @@ const SendCerts = ({setBodyState}) => {
                     case 200:
                         if (["CSV File Poorly Formatted", "Certificate Template Not Found"].includes(res.data)) {
                             setResError(res.data);
+                            socket.disconnect();
+                            setSubmitDisabled(true);
+                            setConfirmBoxFlag(false);
                             setSendingCertsFlag(false);
                             break;
                         }
                         setResError(null);
                         setResOkay(res.data);
+                        socket.disconnect();
+                        setSubmitDisabled(true);
+                        setConfirmBoxFlag(false);
                         setSendingCertsFlag(false);
                         break;
                     case 500:
                         setResError(res.data);
                         setResOkay(null);
+                        socket.disconnect();
+                        setSubmitDisabled(true);
+                        setConfirmBoxFlag(false);
                         setSendingCertsFlag(false);
                         break;
                     default:
                         setResOkay(null);
                         setResError("Some Unknown Issues Occurred");
+                        socket.disconnect();
+                        setSubmitDisabled(true);
+                        setConfirmBoxFlag(false);
                         setSendingCertsFlag(false);
                         break;
                 }
             })
             .catch(err => {
-                setSendingCertsFlag(false);
+                socket.disconnect();
                 setResError("Couldn't connect to server...");
+                setSubmitDisabled(true);
+                setConfirmBoxFlag(false);
+                setSendingCertsFlag(false);
             });
     }
 
@@ -121,9 +146,9 @@ const SendCerts = ({setBodyState}) => {
                 (!loadEventsStatus) ? <div>Sorry, there was a problem while fetching events!!</div>:
                     (sendingCertsFlag) ? <SendingCerts socket={null} setSendingCertsFlag={setSendingCertsFlag} log={log} />:
                 <div>
-                    <form onSubmit={formSubmitHandler}>
+                    <form onSubmit={submitClickHandler}>
                         <label>
-                            Choose the event:
+                            Choose an event:
                             <select ref={eventNameRef} name={"eventName"} disabled={loading}>
                                 {(eventList !== null) ? eventList.map((event) => <option key={event.id} value={event.id}>{event.eventName}</option>) : <option>loading</option>}
                             </select>
@@ -150,6 +175,7 @@ const SendCerts = ({setBodyState}) => {
                         {<p>{resError}</p>}
                         {<p>{resOkay}</p>}
                         <input type="submit" name={"Send"} disabled={submitDisabled} />
+                        {(confirmBoxFlag) ? <ConfirmBox setConfirmBoxFlag={setConfirmBoxFlag} event={formEvent} formSubmitHandler={formSubmitHandler}  />: null}
                     </form>
                     <button onClick={() => setBodyState('root')}>Back</button>
                 </div>
