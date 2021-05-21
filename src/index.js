@@ -4,6 +4,7 @@ import { createStore } from "redux";
 import { Provider } from "react-redux";
 import App from "./App";
 import rootReducer from "./store/rootReducer";
+<<<<<<< HEAD
 import { createFirestoreInstance } from "redux-firestore";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -12,6 +13,14 @@ import {
   setToLocalStorage,
   getFromLocalStorage,
 } from "./store/persistenceFuncs";
+=======
+import {createFirestoreInstance} from "redux-firestore";
+import {ReactReduxFirebaseProvider} from "react-redux-firebase";
+import firebase  from "./firebase";
+import {setToLocalStorage, getFromLocalStorage} from "./store/persistenceFuncs";
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+>>>>>>> styled the dashboard
 
 const rrfConfig = {
   userProfile: "users",
