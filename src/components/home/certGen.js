@@ -6,6 +6,7 @@ import axios from 'axios';
 
 import NavBar from "./navBar";
 import Body from "./body/index";
+import Footer from "./footer";
 
 const CertGen = () => {
     const auth = useSelector(state => state.firebase.auth);
@@ -71,6 +72,7 @@ const CertGen = () => {
         <div>
             <NavBar userState={userState} signOut={signOut} />
             <Body />
+            <Footer />
         </div>
     );
 }
