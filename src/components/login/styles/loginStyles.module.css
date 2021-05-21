@@ -1,0 +1,55 @@
+.boxCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginContainer {
+  background-image: url(../../../assets/images/background.png);
+  background-size: contain;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.loginRow {
+  background-color: #fff;
+  width: 300px !important;
+  height: 400px !important;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.sectionTop {
+  flex-direction: column;
+}
+
+.heroImg {
+  width: 100px;
+  margin: 2rem;
+}
+.sectionTop h1 {
+  font-size: 2rem;
+}
+.sectionTop h3 {
+  font-size: 15px !important;
+}
+.loginForm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 150px !important;
+  height: 150px !important;
+}
+input[type="email"],
+input[type="password"] {
+  height: 27px !important;
+  width: 15rem !important;
+}
+@media only screen and (max-width: 767px) {
+  .loginRow {
+    width: 320px !important;
+  }
+  small {
+    font-size: 45% !important;
+  }
+}
