@@ -29,13 +29,14 @@ const Login = () => {
   const handleLoginButtonClick = (e) => {
     e.preventDefault();
     setButtonDisabled(true);
-
+    console.log("reached before if");
     // TEST
-    if (true || verifyEmailAndPassword()) {
+    if (verifyEmailAndPassword()) {
+      console.log(emailVal.current.value);
       firebase
         .login({
-          email: process.env.REACT_APP_TEST_EMAIL,
-          password: process.env.REACT_APP_TEST_PWORD,
+          email: emailVal.current.value,
+          password: passwordVal.current.value,
         })
         .then((user) => {
           history.push("/");

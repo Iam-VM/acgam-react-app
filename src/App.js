@@ -22,17 +22,9 @@ function App () {
     return (
         <Router>
             <Switch>
-                {/*<Route exact path={'/'} component={CertGen} />*/}
                 <AuthenticatedOnlyRoute exact path={"/"}>
                     <Route component={CertGen} />
                 </AuthenticatedOnlyRoute>
-                {/*<AuthenticatedOnlyRoute exact path={"/send-certs"}>*/}
-                {/*    <Route component={SendCerts} />*/}
-                {/*</AuthenticatedOnlyRoute>*/}
-                {/*<AuthenticatedOnlyRoute exact path={"/"}>*/}
-                {/*    <Route component={CertGen} />*/}
-                {/*</AuthenticatedOnlyRoute>*/}
-                {/*<Route path={"/login"} component={Login} />*/}
                 <UnAuthenticatedRoute path={"/login"}>
                     <Route component={Login} />
                 </UnAuthenticatedRoute>
