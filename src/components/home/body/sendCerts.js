@@ -69,6 +69,7 @@ const SendCerts = ({setBodyState}) => {
             setFileError(1);
             return;
         }
+
         setFileError(0)
         const formData = new FormData();
         formData.append('eventID', eventNameRef.current.value);
@@ -163,6 +164,8 @@ const SendCerts = ({setBodyState}) => {
                                 <option value={"IAS Template - Winners"}>IAS Template - Winners</option>
                                 <option value={"WIE Template - Participants"}>WIE Template - Participants</option>
                                 <option value={"WIE Template - Winners"}>WIE Template - Winners</option>
+                                <option value={"Excelsior21 - Participants"}>Excelsior21 - Participants</option>
+                                <option value={"Excelsior21 - Winners"}>Excelsior21 - Participants</option>
                             </select>
                         </label>
                         <label>

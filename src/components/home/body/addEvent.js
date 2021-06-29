@@ -49,7 +49,7 @@ const AddEvent = ({setBodyState}) => {
         <div>
             <div>
                 <input type="text" ref={eventNameRef} placeholder={"enter event name"} />
-                <DatePicker selected={startDate} onChange={date => setStartDate(date)} />
+                <DatePicker dateFormat={'yyyy-MM-dd'} selected={startDate} onChange={date => setStartDate(date)} />
                 {
                     (loading) ? <div>Loading</div>:
                     (networkStatus === false) ? <div>Sorry, Couldn't reach server.. !!</div>:
